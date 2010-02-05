@@ -1,0 +1,15 @@
+This is going to be a very simple game created for the Bunker Valley folks.
+
+This is going to work as following:
+
+->Players join, when they join they get to select a nickname
+->Every player has a div, it starts with a random generated image.
+->Every player can send text messages that everyone see(its a chat)
+->Every player can send javascript code that is executed in all the clients.
+
+The point of the game is to "do fun stuff in a javascript sandbox" with other people.
+
+It is very experimental because of course players can remove other players "avatar", or change the image to a NSFW thing, even try to do some XSS(well do bad XSS)
+
+This game is being created to play on the Sunday Meeting of the Bunker Valley, the URL will not be public. If you wish to play, contact DFectuoso or host your own server.
+To run this you simple need to have maven and java installed, use "mvn jetty:run" and it will run in your port 8080.
