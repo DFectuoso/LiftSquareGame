@@ -1,4 +1,6 @@
-This is going to be a very simple game created for the Bunker Valley folks.
+**LiftChatGame**
+
+This is going to be a very simple game created for the Bunker Valley folks. **USE AT YOUR OWN RISK**
 
 This is going to work as following:
 
@@ -7,7 +9,7 @@ This is going to work as following:
 ->Every player can send text messages that everyone see(its a chat)
 ->Every player can send javascript code that is executed in all the clients.
 
-The point of the game is to "do fun stuff in a javascript sandbox" with other people.
+The point of the game is to "do **fun** stuff in a javascript sandbox" with other people.
 
 It is very experimental because of course players can remove other players "avatar", or change the image to a NSFW thing, even try to do some XSS(well do bad XSS)
 
