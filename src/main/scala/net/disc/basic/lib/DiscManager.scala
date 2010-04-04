@@ -37,10 +37,6 @@ class DiscManager extends Actor {
           discCommandsActors.foreach(_ ! IndexedMessage(i,what))
           i = i + 1
 
-        case MessageJavascript(what) =>
-          discCommandsActors.foreach(_ ! MessageJavascript(what))
-          i = i + 1
-
         case _ => println("Manager - fallthru case")
       }
     }
@@ -51,5 +47,4 @@ case class Subscribe(act: LiftActor, Nickname:String)
 case class Unsubscribe(act: LiftActor)
 case class Inside(who: String)
 case class Message(what: String)
-case class MessageJavascript(what: String)
 case class IndexedMessage(id: Int, what:String)

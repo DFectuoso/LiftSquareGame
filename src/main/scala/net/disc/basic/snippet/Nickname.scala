@@ -22,10 +22,11 @@ class Nickname {
   }
 
   def renderNicknameForm:NodeSeq= {
-    <div>
+    <div class="login">
       <form type="post">
-        Nickname: <input type="text" name="nickname"/><br/>
-        <input type="submit" text="Entrar"/>
+        <h1>Nickname</h1>
+        <input type="text" name="nickname"/>
+        <input type="submit" value="NOW NOW NOW"/>
       </form>
     </div>
   }

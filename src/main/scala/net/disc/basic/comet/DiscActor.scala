@@ -30,16 +30,8 @@ import JqJE._
 
 import net.disc.basic.lib._
 
-object DiscActor {
-   var prefixNum = 0;
-   def nextNum() = {
-       prefixNum = prefixNum + 1;
-       prefixNum
-   } 
-}
-
 class DiscActor extends CometActor {
-  override def defaultPrefix = Full("disc" + nextNum)
+  override def defaultPrefix = Full("disc")
 
   private lazy val discManager: DiscManager = DiscController.getManager
 
@@ -48,50 +40,37 @@ class DiscActor extends CometActor {
     super.localSetup
   }
 
-  override def localShutdown {
-    super.localShutdown
-  }
-
   def render =  {
-    <span>
-      <div id="messages">
-      </div>
+    <div class="game-container">
+      <head><script type="text/javascript" src="/scripts/game.js"></script></head>
       <div id="who">
-       {discManager.getNickNameList.map(n => <div id={n}>{n}</div>)}
+        {discManager.getNickNameList.map(n => <div id={n}>{n}</div>)}
       </div>
-      <textarea id="message"></textarea>
-      <button id="postingButton" onclick={jsonCall("post_message", JE.JsObj("message" -> JE.ValById("message")))}>
-        Post
-      </button>
 
-      <div>
-        Javascript: <br/>
-        <textarea id="javascript"></textarea>
-        <button id="postingJavascript" onclick={jsonCall("post_javascript", JE.JsObj("javascript" -> JE.ValById("javascript")))}>
-          Post
+      <div id="messages"/>
+      <div id="chat-input">
+        <textarea id="message-textarea"></textarea>
+        <button id="posting-button" onclick={(jsonCall("post_message", JE.JsObj("message" -> JE.ValById("message-textarea"))) & Call("clearChat")) }>
+          Chat
         </button>
       </div>
-    </span>
+   </div>
   }
 
   override def lowPriority = {
     case Inside(who) => 
       partialUpdate(AppendHtml("who", <div id={who}>{who}</div>))
-    case IndexedMessage(id,what) => 
-      partialUpdate(PrependHtml("messages", <div class="message">{what}</div>)) 
-    case MessageJavascript(what) => 
-      partialUpdate(JsRaw(what))
+    case IndexedMessage(id,what) =>
+      val scroll = JqId("messages") >> JqScrollToBottom
+      val append = AppendHtml("messages", <div class="message">{what}</div>)
+      partialUpdate(append & scroll) 
   }
 
   override def handleJson(in: Any): JsCmd = {
     in match {
       case JsonCmd("post_message",_,params:Map[String,String],_) =>
-        if(params("message").length > 0)
+        if(params("message").trim.length > 0)
           discManager ! Message(nick.is + ":" + params("message"))
-        Noop
-      case JsonCmd("post_javascript",_,params:Map[String,String],_) =>
-        if(params("javascript").length > 0 && param("javascript").indexOf('"') == -1)
-          discManager ! MessageJavascript(params("javascript").replace( '"' + "", '\"' + "" ))
         Noop
 
       case JsonCmd(_,_,d,_) => println("handleJson(): no match" + d); Noop

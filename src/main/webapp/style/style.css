@@ -1,0 +1,55 @@
+body{
+  width:950px;
+  margin:auto;
+  background:black;
+  font:medium/1 'Gill Sans','Gill Sans MT','Goudy Bookletter 1911','Linux Libertine O','Liberation Serif',Candara,serif;
+}
+
+.container{
+  background:grey;
+  height: 500px;
+}
+
+.login{
+  width:400px;
+  margin:auto;
+  padding-top:150px;
+}
+
+.login h1 {
+  color:white;
+}
+
+#who{
+  width:950px;
+  height:350px;
+  background:pink;
+}
+
+#messages{
+  width:950px;
+  height:100px;
+  background:orange;
+  overflow:auto;
+}
+
+#chat-inputs{
+  width:950px;
+  height:50px;
+}
+
+#message-textarea{
+  width:850px;
+  height:46px;
+}
+
+#posting-button{
+  width:98px;
+  height:50px;
+  float:right;
+}
+
+.message{
+  height:20px;
+  font-size:1em;
+}
