@@ -4,21 +4,20 @@ var getArrows = function(ev) {
   arrows=((ev.which)||(ev.keyCode));
   switch(arrows) {
     case 37:
-      console.log('left arrow');
+      post_to_server("control",{"direction": "left"});
       break;
     case 38:
-      console.log('up arrow');
+      post_to_server("control",{"direction": "up"});
       break;
     case 39:
-      console.log('right arrow');
+      post_to_server("control",{"direction": "right"});
       break;
     case 40:
-      console.log('down arrow');
+      post_to_server("control",{"direction": "down"});
       break;
   }
 }
 
- 
 jQuery('document').ready(function(){
   var submitChatOnEnter = function(e){
     var keynum;

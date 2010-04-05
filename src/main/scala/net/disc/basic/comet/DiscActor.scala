@@ -50,10 +50,11 @@ class DiscActor extends CometActor {
       <div id="messages"/>
       <div id="chat-input">
         <textarea id="message-textarea"></textarea>
-        <button id="posting-button" onclick={(jsonCall("post_message", JE.JsObj("message" -> JE.ValById("message-textarea"))) & Call("clearChat")) }>
+        <button id="posting-button" onclick={(Call("post_to_server", "post_message", JE.JsObj("message" -> JE.ValById("message-textarea"))) & Call("clearChat")) }>
           Chat
         </button>
       </div>
+      {Script(JsCmds.Function("post_to_server", List("cmd", "params"),jsonCall(JsVar("cmd"), JsVar("params"))))}
    </div>
   }
 
