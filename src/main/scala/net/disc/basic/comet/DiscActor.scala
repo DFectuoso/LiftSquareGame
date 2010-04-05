@@ -44,7 +44,7 @@ class DiscActor extends CometActor {
     <div class="game-container">
       <head><script type="text/javascript" src="/scripts/game.js"></script></head>
       <div id="who">
-        {discManager.getNickNameList.map(n => <div id={n}>{n}</div>)}
+        {discManager.getNickNameList.map(n => <div id={n.id}>{n.nick}</div>)}
       </div>
 
       <div id="messages"/>
@@ -72,6 +72,11 @@ class DiscActor extends CometActor {
       case JsonCmd("post_message",_,params:Map[String,String],_) =>
         if(params("message").trim.length > 0)
           discManager ! Message(nick.is + ":" + params("message"))
+        Noop
+
+      case JsonCmd("control",_,params:Map[String,String],_) =>
+        println("got" + params("direction"))
+        discManager ! Control(nick.is, params("direction"))
         Noop
 
       case JsonCmd(_,_,d,_) => println("handleJson(): no match" + d); Noop
