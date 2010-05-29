@@ -1,7 +1,0 @@
-<lift:surround with="default" at="content">
-  <h2 class="center">Rockstar Follower</h2>
-<hr/>
-  <lift:Index.ifLoggedInHelloElseExplain />
-	
-</lift:surround>
-

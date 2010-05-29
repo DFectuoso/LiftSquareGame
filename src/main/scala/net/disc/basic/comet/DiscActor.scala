@@ -44,7 +44,7 @@ class DiscActor extends CometActor {
     <div class="game-container">
       <head><script type="text/javascript" src="/scripts/game.js"></script></head>
       <div id="who">
-        {discManager.getNickNameList.map(n => <div id={n.id}>{n.nick}</div>)}
+        {discManager.getNickNameList.map(n => <div id={n.id} style={"top:" + n.x + "px; left:" + n.y + "px"} class="player">{n.nick}</div>)}
       </div>
 
       <div id="messages"/>
@@ -60,7 +60,11 @@ class DiscActor extends CometActor {
 
   override def lowPriority = {
     case Inside(who) => 
-      partialUpdate(AppendHtml("who", <div id={who}>{who}</div>))
+      partialUpdate(AppendHtml("who", <div id={who.id} class="player">{who.nick}</div>))
+    case UpdatePlayer(user) =>
+      var movePlayer = JsRaw("document.getElementById('"+user.id+"').style.left = '" + user.y + "px'") &
+                       JsRaw("document.getElementById('"+user.id+"').style.top= '" + user.x + "px'")
+      partialUpdate(movePlayer)
     case IndexedMessage(id,what) =>
       val scroll = JqId("messages") >> JqScrollToBottom
       val append = AppendHtml("messages", <div class="message">{what}</div>)

@@ -23,7 +23,7 @@ body{
 #who{
   width:950px;
   height:350px;
-  background:pink;
+  background:grey;
 }
 
 #messages{
@@ -52,4 +52,12 @@ body{
 .message{
   height:20px;
   font-size:1em;
+}
+.player{
+  width:100px;
+  height:100px;
+  top:0px;
+  background:red;
+  left:0px;
+  position:absolute;
 }

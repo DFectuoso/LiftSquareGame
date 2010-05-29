@@ -19,16 +19,25 @@ class DiscManager extends Actor {
 
   def getNickNameList = nickNameList
 
+  def getUser(nick:String) = {
+    nickNameList.filter((a) => a.nick == nick)
+  }
+
+  def updateAfterControl(user:List[User]) = {
+   discCommandsActors.foreach(_ ! UpdatePlayer(user.head))
+  }
+
   def act = {
     link(ActorWatcher)
     loop {
       react {
         case Subscribe(act,nickname) =>
           println("I just suscribed actor:" + act + " with Nickname " + nickname)
-          nickNameList = User(i,nickname,0,0) :: nickNameList
+          val user = new User(i,nickname,0,0)
+          nickNameList = user :: nickNameList
           i = i + 1
           discCommandsActors = act :: discCommandsActors
-          discCommandsActors.foreach(_ ! Inside(nickname))
+          discCommandsActors.foreach(_ ! Inside(user))
 
         case Unsubscribe(act) =>
           println("I just UNsuscribed actor:" + act)
@@ -38,35 +47,34 @@ class DiscManager extends Actor {
           discCommandsActors.foreach(_ ! IndexedMessage(i,what))
           i = i + 1
       
-        case Control(who,what) if what == "up" =>
-          nickNameList.filter((a)=> a.nick == who).map(u=>
-            println("up" + u + "up")
-          )
-        case Control(who,what) if what == "down" =>
-          nickNameList.filter((a)=> a.nick == who).map(u=>
-            println("down" + u + "up")
-          )
- 
-        case Control(who,what) if what == "left" =>
-          nickNameList.filter((a)=> a.nick == who).map(u=>
-            println("left" + u + "up")
-          )
+        case Control(who,what) =>
+          val user = getUser(who)
+          if (what == "up")
+            user.map(u => u.x = u.x - 10)
+          if (what == "down")
+            user.map(u => u.x = u.x + 10)
+          if (what == "right")
+            user.map(u => u.y = u.y + 10)
+          if (what == "left")
+            user.map(u => u.y = u.y - 10)
+         updateAfterControl(user)
 
-        case Control(who,what) if what == "right" =>
-          nickNameList.filter((a)=> a.nick == who).map(u=>
-            println("right" + u + "up")
-          )
- 
         case _ => println("Manager - fallthru case")
       }
     }
   }
 }
 
-case class User(id:Int,nick:String, x:Int,y:Int)
+case class UpdatePlayer(user:User)
+class User(idVar:Int,nickVar:String, xVar:Int,yVar:Int){
+  var id = idVar
+  var nick = nickVar
+  var x = xVar
+  var y = yVar
+}
 case class Subscribe(act: LiftActor, Nickname:String)
 case class Unsubscribe(act: LiftActor)
-case class Inside(who: String)
+case class Inside(user: User)
 case class Message(what: String)
 case class Control(who:String, direction:String)
 case class IndexedMessage(id: Int, what:String)
