@@ -13,50 +13,46 @@ import scala.collection.immutable._
 
 class DiscManager extends Actor {
 
-  private var discCommandsActors: List[(LiftActor)] = Nil
-  private var nickNameList: List[(User)] = Nil
-  private var i = 1;
+  var playerList: List[(User)] = Nil
 
-  def getNickNameList = nickNameList
-
-  def getUser(nick:String) = {
-    nickNameList.filter((a) => a.nick == nick)
+  def getUser(actor:LiftActor) = {
+    playerList.filter((a) => a.actor == actor).head
   }
 
-  def updateAfterControl(user:List[User]) = {
-   discCommandsActors.foreach(_ ! UpdatePlayer(user.head))
+  def updateAfterControl(user:User) = {
+    playerList.foreach(_.actor ! UpdatePlayer(user))
+  }
+
+  def generateRandomColor = {
+    val r = new scala.util.Random
+    var R:java.lang.Integer = new Integer(r.nextInt(255))
+    var G:java.lang.Integer = new Integer(r.nextInt(255))
+    var B:java.lang.Integer = new Integer(r.nextInt(255))
+    String.format("#%x%x%x",R,G,B)
   }
 
   def act = {
     link(ActorWatcher)
     loop {
       react {
-        case Subscribe(act,nickname) =>
-          println("I just suscribed actor:" + act + " with Nickname " + nickname)
-          val user = new User(i,nickname,0,0)
-          nickNameList = user :: nickNameList
-          i = i + 1
-          discCommandsActors = act :: discCommandsActors
-          discCommandsActors.foreach(_ ! Inside(user))
+        case Subscribe(act) =>
+          val user = new User(act,100,100, generateRandomColor)
+          playerList = user :: playerList 
+          playerList.foreach(_.actor ! Inside(user))
 
         case Unsubscribe(act) =>
-          println("I just UNsuscribed actor:" + act)
-          discCommandsActors = discCommandsActors.filter(_ ne act)
+          playerList = playerList.filter(_.actor ne act)
 
-        case Message(what) =>
-          discCommandsActors.foreach(_ ! IndexedMessage(i,what))
-          i = i + 1
-      
         case Control(who,what) =>
           val user = getUser(who)
           if (what == "up")
-            user.map(u => u.x = u.x - 10)
+            user.x -= 10
           if (what == "down")
-            user.map(u => u.x = u.x + 10)
+            user.x += 10
           if (what == "right")
-            user.map(u => u.y = u.y + 10)
+            user.y += 10
           if (what == "left")
-            user.map(u => u.y = u.y - 10)
+            user.y -= 10
          updateAfterControl(user)
 
         case _ => println("Manager - fallthru case")
@@ -65,16 +61,14 @@ class DiscManager extends Actor {
   }
 }
 
-case class UpdatePlayer(user:User)
-class User(idVar:Int,nickVar:String, xVar:Int,yVar:Int){
-  var id = idVar
-  var nick = nickVar
+class User(actorVar:LiftActor, xVar:Int,yVar:Int, colorVar:String){
+  var actor = actorVar
   var x = xVar
   var y = yVar
+  var color= colorVar
 }
-case class Subscribe(act: LiftActor, Nickname:String)
+case class UpdatePlayer(user:User)
+case class Subscribe(act: LiftActor)
 case class Unsubscribe(act: LiftActor)
 case class Inside(user: User)
-case class Message(what: String)
-case class Control(who:String, direction:String)
-case class IndexedMessage(id: Int, what:String)
+case class Control(who:LiftActor, direction:String)

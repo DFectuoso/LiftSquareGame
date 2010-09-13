@@ -1,5 +1,3 @@
-var clearChat = function(){$('#message-textarea')[0].value="";}
-
 var getArrows = function(ev) {
   arrows=((ev.which)||(ev.keyCode));
   switch(arrows) {
@@ -19,19 +17,11 @@ var getArrows = function(ev) {
 }
 
 jQuery('document').ready(function(){
-  var submitChatOnEnter = function(e){
-    var keynum;
-    if(window.event) {
-      keynum = e.keyCode;
-    } else if(e.which) {
-      keynum = e.which;
-    }
-    if (keynum == 13) {
-      $('#posting-button').click();
-      clearChat();
-    }
-  }
-
-  $('#message-textarea')[0].onkeypress = submitChatOnEnter;
-  document.onkeydown = getArrows;
+ document.onkeydown = getArrows;
 });
+
+function u(id,x,y) {
+  node = document.getElementById(id)
+  node.style.top = x + "px";
+  node.style.left = y + "px";
+}

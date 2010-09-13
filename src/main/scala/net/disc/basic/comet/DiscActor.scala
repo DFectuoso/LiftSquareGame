@@ -36,51 +36,33 @@ class DiscActor extends CometActor {
   private lazy val discManager: DiscManager = DiscController.getManager
 
   override def localSetup {
-    discManager ! Subscribe(this, nick.is)
+    discManager ! Subscribe(this)
     super.localSetup
   }
 
   def render =  {
     <div class="game-container">
-      <head><script type="text/javascript" src="/scripts/game.js"></script></head>
       <div id="who">
-        {discManager.getNickNameList.map(n => <div id={n.id} style={"top:" + n.x + "px; left:" + n.y + "px"} class="player">{n.nick}</div>)}
+        {discManager.playerList.map(n => <div id={n.actor.toString} style={"top:" + n.x + "px; left:" + n.y + "px; background-color:" + n.color  + ""} class="player"></div>)}
       </div>
 
-      <div id="messages"/>
-      <div id="chat-input">
-        <textarea id="message-textarea"></textarea>
-        <button id="posting-button" onclick={(Call("post_to_server", "post_message", JE.JsObj("message" -> JE.ValById("message-textarea"))) & Call("clearChat")) }>
-          Chat
-        </button>
-      </div>
       {Script(JsCmds.Function("post_to_server", List("cmd", "params"),jsonCall(JsVar("cmd"), JsVar("params"))))}
    </div>
   }
 
+  def updateUser(user:User) = JsRaw("u('"+user.actor.toString+"',"+user.x+","+user.y+")")
+
   override def lowPriority = {
     case Inside(who) => 
-      partialUpdate(AppendHtml("who", <div id={who.id} class="player">{who.nick}</div>))
+      partialUpdate(AppendHtml("who", <div id={who.actor.toString} style={"background-color:"+who.color} class="player"></div>) & updateUser(who))
     case UpdatePlayer(user) =>
-      var movePlayer = JsRaw("document.getElementById('"+user.id+"').style.left = '" + user.y + "px'") &
-                       JsRaw("document.getElementById('"+user.id+"').style.top= '" + user.x + "px'")
-      partialUpdate(movePlayer)
-    case IndexedMessage(id,what) =>
-      val scroll = JqId("messages") >> JqScrollToBottom
-      val append = AppendHtml("messages", <div class="message">{what}</div>)
-      partialUpdate(append & scroll) 
+      partialUpdate(updateUser(user))
   }
 
   override def handleJson(in: Any): JsCmd = {
     in match {
-      case JsonCmd("post_message",_,params:Map[String,String],_) =>
-        if(params("message").trim.length > 0)
-          discManager ! Message(nick.is + ":" + params("message"))
-        Noop
-
       case JsonCmd("control",_,params:Map[String,String],_) =>
-        println("got" + params("direction"))
-        discManager ! Control(nick.is, params("direction"))
+        discManager ! Control(this, params("direction"))
         Noop
 
       case JsonCmd(_,_,d,_) => println("handleJson(): no match" + d); Noop
