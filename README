@@ -1,17 +1,7 @@
-**LiftChatGame**
+**LiftSquareGame**
 
-This is going to be a very simple game created for the Bunker Valley folks. **USE AT YOUR OWN RISK**
+This is a very simple example of how to use Lift Comet Actors to create a game.
 
-This is going to work as following:
+Each player enters and gets a square, they can move it with their arrow keys. That is all.
 
-->Players join, when they join they get to select a nickname
-->Every player has a div, it starts with a random generated image.
-->Every player can send text messages that everyone see(its a chat)
-->Every player can send javascript code that is executed in all the clients.
-
-The point of the game is to "do **fun** stuff in a javascript sandbox" with other people.
-
-It is very experimental because of course players can remove other players "avatar", or change the image to a NSFW thing, even try to do some XSS(well do bad XSS)
-
-This game is being created to play on the Sunday Meeting of the Bunker Valley, the URL will not be public. If you wish to play, contact DFectuoso or host your own server.
-To run this you simple need to have maven and java installed, use "mvn jetty:run" and it will run in your port 8080.
+The code is really simple and I will link to a presentation explaining a lot about it later this week.
