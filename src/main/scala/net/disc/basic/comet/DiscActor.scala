@@ -30,11 +30,18 @@ import net.disc.basic.lib._
 class DiscActor extends CometActor {
   override def defaultPrefix = Full("disc")
 
+  override def lifespan = Full(3 minutes)
+
   private lazy val discManager: DiscManager = DiscController.getManager
 
   override def localSetup {
     discManager ! Subscribe(this)
     super.localSetup
+  }
+
+  override def localShutdown {
+    discManager ! Unsubscribe(this)
+    super.localShutdown
   }
 
   def render =  {
