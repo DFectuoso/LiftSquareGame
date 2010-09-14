@@ -12,9 +12,6 @@ import Helpers._
 import js._
 import JsCmds._
 import JE._
-
-import net.disc.basic.snippet._
-
 import net.liftweb.http.js._
 import net.liftweb.http.js.JsCmds._
 import net.liftweb.common._
